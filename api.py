@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from ads_number_final import get_ads_number, initialize_driver, close_driver
+from ads_number_final import get_ads_number
 
 app = Flask(__name__)
 
@@ -8,9 +8,9 @@ def get_ads():
     query = request.args.get('query', '')
     
     # Inicializar el navegador para cada solicitud
-    driver = initialize_driver()
-    numero_anuncios = get_ads_number(driver, query)
-    close_driver(driver)
+    
+    numero_anuncios = get_ads_number(query)
+    
     
     print(query)
 
@@ -29,6 +29,13 @@ def get_ads():
         ]
     }
     return jsonify(response)
-
+@app.route('/status', methods=['GET'])
+def status():
+    response = {
+        "status": "OK",
+        "message": "server running"
+    }
+    return jsonify(response)
+    
 if __name__ == '__main__':
     app.run(host='localhost', port=3005)

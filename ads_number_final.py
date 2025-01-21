@@ -1,20 +1,45 @@
 import requests
 import re
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException, NoSuchElementException
+#from proxies import ProxyV6Manager
 
-def initialize_driver():
-    options = webdriver.ChromeOptions()
-    options.add_argument("--start-maximized")
-    driver = webdriver.Chrome(options=options)
-    return driver
+
+
+#proxy nuevo
+username = 'spjgsbjcg4'
+password = '42wsTn=v9HqBr6cdTb'
+proxy = f"http://{username}:{password}@gate.smartproxy.com:10001"
+
+# Opciones de Chrome
+options = webdriver.ChromeOptions()
+# options.add_argument("--start-maximized")
+options.add_argument("--headless")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--disable-gpu")
+options.add_argument("--disable-software-rasterizer")
+options.add_argument("--disable-accelerated-2d-canvas")
+options.add_argument("--disable-accelerated-video-decode")
+options.add_argument("--use-gl=swiftshader")
+
+
+options.add_argument('--lang=en')
+options.add_argument(f'--proxy-server={proxy}')
+
+# Iniciar el navegador con las opciones configuradas
+driver = webdriver.Chrome(options=options)
+
+
 
 def close_driver(driver):
     driver.quit()
 
-def get_ads_number(driver, url):
+def get_ads_number(url):
     try:
         # Navegar a la URL objetivo
         driver.get(url)
@@ -39,8 +64,15 @@ def get_ads_number(driver, url):
        
         else:
             print("No se encontraron números en el texto.")
-            return 0   
+            return 0
+
+        close_driver(driver)   
 
     except Exception as e:
         print(f"❌ Se produjo un error: {e}")
         return 0
+
+if __name__ == '__main__':
+    query="https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=ALL&source=page-transparency-widget&view_all_page_id=194709120392912"
+    numero_anuncios = get_ads_number(query)
+    close_driver(driver)
